@@ -1,0 +1,122 @@
+<div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-fade-in">
+  <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+    <h2 class="text-lg font-bold text-gray-800">
+      {{ isEditing ? 'Editar Veículo' : 'Cadastrar Novo Veículo' }}
+    </h2>
+    <span class="text-xs font-medium text-gray-400 uppercase tracking-widest">Infomações Técnicas</span>
+  </div>
+
+  <form [formGroup]="veiculoForm" (ngSubmit)="onSubmit()" class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Placa (Mercosul)</label>
+        <input formControlName="placa"
+               maxlength="7"
+               placeholder="ABC1D23"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all uppercase placeholder:normal-case font-mono text-blue-700 bg-gray-50/50">
+        <div class="h-4">
+          <span *ngIf="veiculoForm.get('placa')?.invalid && veiculoForm.get('placa')?.touched" class="text-[10px] text-red-500 font-medium">
+            Formato: 3 letras, 1 número, 1 letra, 2 números.
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Modelo</label>
+        <input formControlName="modelo"
+               maxlength="50"
+               placeholder="Ex: Corolla"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Marca</label>
+        <input formControlName="marca"
+               maxlength="30"
+               placeholder="Ex: Toyota"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Chassi (17 caracteres)</label>
+        <input formControlName="chassi"
+               maxlength="17"
+               placeholder="Digite os 17 caracteres"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all font-mono text-sm uppercase">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Renavam (11 dígitos)</label>
+        <input formControlName="renavam"
+               maxlength="11"
+               placeholder="00000000000"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all font-mono text-sm">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-xs font-bold text-gray-600 mb-1 uppercase tracking-tight">Ano</label>
+        <input formControlName="ano"
+               type="number"
+               class="w-full px-3 py-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none transition-all">
+      </div>
+    </div>
+
+    <div class="mt-8 flex justify-end gap-3 border-t border-gray-50 pt-6">
+      <button type="button"
+              (click)="reset()"
+              class="px-5 py-2 text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest">
+        Cancelar
+      </button>
+      <button type="submit"
+              [disabled]="veiculoForm.invalid"
+              class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-10 py-2 rounded-lg font-bold shadow-md transition-all transform active:scale-95 uppercase text-xs tracking-widest">
+        {{ isEditing ? 'Salvar Alterações' : 'Finalizar Cadastro' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="mt-10 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <table class="w-full text-left">
+    <thead>
+    <tr class="bg-gray-50 text-gray-400 text-[11px] uppercase tracking-[0.2em]">
+      <th class="px-6 py-4 font-bold">Identificação</th>
+      <th class="px-6 py-4 font-bold">Documentação</th>
+      <th class="px-6 py-4 font-bold text-right">Gerenciamento</th>
+    </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-50">
+    <tr *ngFor="let v of veiculos" class="hover:bg-blue-50/40 transition-colors group">
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="font-bold text-gray-800 text-base uppercase">{{v.modelo}}</span>
+          <span class="text-xs text-gray-500 italic">{{v.marca}} • {{v.ano}}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="text-sm font-bold text-blue-600 font-mono tracking-tighter">{{v.placa}}</span>
+          <span class="text-[10px] text-gray-400 uppercase">Chassi: {{v.chassi}}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4 text-right">
+        <div class="flex justify-end gap-4">
+          <button (click)="edit(v)" class="flex items-center text-gray-400 hover:text-blue-600 transition-colors">
+            <span class="text-xs font-bold uppercase tracking-tighter">Editar</span>
+          </button>
+          <button (click)="delete(v.id!)" class="flex items-center text-gray-400 hover:text-red-500 transition-colors">
+            <span class="text-xs font-bold uppercase tracking-tighter">Excluir</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+
+    <tr *ngIf="veiculos.length === 0">
+      <td colspan="3" class="px-6 py-12 text-center">
+        <p class="text-gray-400 text-sm italic">Nenhum veículo cadastrado na frota no momento.</p>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
